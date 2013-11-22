@@ -1,4 +1,4 @@
 datePicker
 ==========
 
-Date Picker
+jQuery-based DatePicker
