@@ -1,0 +1,38 @@
+﻿<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<link href="../a.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+-->
+</style>
+<script src="../jquery.min.js"></script>
+<script src="../datePicker.min.js"></script>
+<SCRIPT>
+$(function(){
+	$('.date').datePicker({
+		week_name:['日','一','二','三','四','五','六'],
+		month_name:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+		success:function(date){
+			//dateTargetField.value=date.length?date[0]+'-'+date[1]+'-'+date[2]:'';
+			alert(date);
+		}
+	});
+})
+</SCRIPT>
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+
+<form style="margin:1px;" method="post">
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi, officiis, velit, explicabo, obcaecati ex necessitatibus a omnis illo consequuntur eveniet ullam officia odit itaque minus eaque minima harum porro quod ducimus eius deserunt fugit amet culpa corporis ipsa? Quod, hic voluptate nostrum ea velit earum eum laudantium et id reprehenderit inventore obcaecati qui incidunt explicabo illum labore mollitia perspiciatis nisi atque nesciunt aliquid unde quis repellat ex expedita dolores minima eveniet debitis maxime sed amet iure asperiores libero alias pariatur accusantium sunt quae in dignissimos maiores impedit voluptatibus? Eaque, ab, esse illo totam cum omnis iste. Dolorum quod consequatur tenetur.</p>
+<hr>
+Date I: <input class="date" name="interview_time" type="text" size="12" value="2010-12-25"></br>
+Date II: <input class="date" name="caseStart_time" type="text" size="12"></br>
+Multiple Date: <input name="multi_date" type="text" size="80">
+</form>
+</body>
+</html>
