@@ -6,14 +6,14 @@
 		font_family:'"Arial","Helvetica","sans-serif"',
 		bcl:"#000000",
 		bcd:"#FFFFFF",
-		clearButton:true, /* 清空按鈕 */
-		weekMode:false,	/* 選週模式 */
-		multipleSelect:false, /* 複選日期 */
-		success:function(d){ /* 可重設指定外部function執行選定日期後續動作 */
-			alert('Need customer function to handle return date!('+d[0]+','+d[1]+','+d[2]+')');
+		clearButton:true,		// 清空按鈕
+		weekMode:false,			// 選週模式
+		multipleSelect:false,	// 複選日期
+		success:function(date){	// 可重設指定外部function執行選定日期後續動作
+			this.targetField.value=date.length?date[0]+'-'+date[1]+'-'+date[2]:'';
 		}
 	};
-	this.every_days=[];	/* 當月每個cell(空白or日期) */
+	this.every_days=[];	// 當月每個cell(空白or日期)
 	this._posX=0;
 	this._posY=0;
 	this.sel_y=null;
@@ -23,13 +23,14 @@
 	this.multipleSelectResult=[];
 	this.multipleSelectResultBox=null;
 	this.targetField=null;
+	this.initialized=false;
 
 	this.element=null;
 }
 CalendarSelector.prototype={
 	init:function(options){
 		$.extend(this.options,options||{});
-		if(this.options.multipleSelect){ /* 複選日期不提供清空按鈕及選週模式 */
+		if(this.options.multipleSelect){ // 複選日期不提供清空按鈕及選週模式
 			this.options.clearButton=false;
 			this.options.weekMode=false;
 		}
@@ -40,6 +41,7 @@ CalendarSelector.prototype={
 				event.stopPropagation();
 			});
 		$(document).bind('click',$.proxy(this,'hindCalendar'));
+		this.initialized=true;
 	},
 	setMultipleSelectResult:function(date){
 		this.multipleSelectResult=[];
@@ -47,7 +49,7 @@ CalendarSelector.prototype={
 			this.multipleSelectResult.push(date[i]);
 		}
 	},
-	_maxDate:function(yy,mm){ /* mm:0-11, 傳回某月份最後一日日期 */
+	_maxDate:function(yy,mm){ // mm:0-11, 傳回某月份最後一日日期
 		while(mm<0){
 			mm=12+mm;
 			yy--;
@@ -74,7 +76,7 @@ CalendarSelector.prototype={
 		}
 		return true;
 	},
-	showCalendar:function(yy,mm,dd){ /* mm:0-11 */
+	showCalendar:function(yy,mm,dd){ // mm:0-11
 		if(this.check_date(yy,mm,dd)){
 			this.sel_y=yy;
 			this.sel_m=mm;
@@ -282,21 +284,23 @@ CalendarSelector.prototype={
 				}else{
 					this.return_value=dateArray;
 				}
-				this.options.success([this.return_value[0],(this.return_value[1]*1+1),this.return_value[2],this.return_value[3],(this.return_value[4]*1+1),this.return_value[5]]);
+				//this.options.success([this.return_value[0],(this.return_value[1]*1+1),this.return_value[2],this.return_value[3],(this.return_value[4]*1+1),this.return_value[5]]);
+				this.options.success.call(this,[this.return_value[0],(this.return_value[1]*1+1),this.return_value[2],this.return_value[3],(this.return_value[4]*1+1),this.return_value[5]]);
 			}else{
-				this.options.success(this.multipleSelectResult);
+				//this.options.success(this.multipleSelectResult,[this.return_value[0],(this.return_value[1]*1+1),this.return_value[2],this.return_value[3],(this.return_value[4]*1+1),this.return_value[5]]);
+				this.options.success.call(this,this.multipleSelectResult,[this.return_value[0],(this.return_value[1]*1+1),this.return_value[2],this.return_value[3],(this.return_value[4]*1+1),this.return_value[5]]);
 			}
 		}else{
-			this.options.success([]);
+			this.options.success.call(this,[]);
 		}
 		this.hindCalendar();
 	},
 	_datesHandler:function(event){
 		var obj=event.data.obj;
 		if(obj.multipleSelectResult.length){
-			obj.options.success(obj.multipleSelectResult);
+			obj.options.success.call(this,obj.multipleSelectResult);
 		}else{
-			obj.options.success([]);
+			obj.options.success.call(this,[]);
 		}
 		obj.hindCalendar();
 	},
@@ -317,22 +321,26 @@ CalendarSelector.prototype={
 };
 
 
-
+// define jQuery plugin datePicker()
 (function($){
 	var calendar=new CalendarSelector();
 
 	$.fn.datePicker=function(options){
 		if(!this.length)
 			return this;
-		calendar.init(options); // domReady才能init()
 		this.each(function(){
 			if(this.tagName.toUpperCase()=='INPUT'&&this.getAttribute('type').toUpperCase()=='TEXT'){
 				$(this).attr('readonly',true).css('cursor','pointer')
 					.on('click',{},function(event){
 						var target=$(event.target),
 							pos=target.offset(),
-							calendarLayerHeight=calendar.element.height(),
+							calendarLayerHeight,
 							dA;
+
+						if(!calendar.initialized){
+							calendar.init(options);
+						}
+						calendarLayerHeight=calendar.element.height();
 
 						calendar.targetField=target[0];
 						// 超過版面要往上長的話, 在此處處理
