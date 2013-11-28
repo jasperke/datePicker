@@ -37,7 +37,7 @@
 				this.options.clearButton = false;
 				this.options.weekMode = false;
 			}
-			this.element = $('<div/>').css({position: 'absolute', width: this.options.uiWidth + 'px', border: '1px solid #7D7D7D'})
+			this.element = $('<div/>').css({position: 'absolute', width: this.options.uiWidth + 'px', border: '1px solid #7D7D7D', zIndex: 999})
 				.hide()
 				.appendTo('body')
 				.on('click', function (event) {
