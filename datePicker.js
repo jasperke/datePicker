@@ -12,8 +12,13 @@
 			clearButton: true,		// 清空按鈕
 			weekMode: false,			// 選週模式
 			multipleSelect: false,	// 複選日期
+			taiwan: false, // 是否採民國年
 			success: function(date) {	// 可重設指定外部function執行選定日期後續動作
-				this.targetField.value = date.length ? date[0] + '-' + date[1] + '-' + date[2] : '';
+				if (this.options.taiwan) {
+					this.targetField.value = date.length ? '民國' + (date[0] - 1911) + '年' + date[1] + '月' + date[2] +'日': '';
+				} else {
+					this.targetField.value = date.length ? date[0] + '-' + date[1] + '-' + date[2] : '';
+				}
 			}
 		};
 		this.everyDays = [];	// 當月每個cell(空白or日期)
@@ -121,6 +126,10 @@
 			return this._show;
 		},
 		changeDate: function (y, m, d) {
+			if (y !== null && y < 202) { // 小於202自動視為民國年
+				y = parseInt(y, 10) + 1911;
+			}
+
 			this.element.empty();
 			if (y !== null) {
 				this.selY = y;
@@ -145,7 +154,7 @@
 			this._todayMonth = nowTime.getMonth();
 			this._todayDate = nowTime.getDate();
 		},
-		_buildArray: function() {
+		_buildArray: function () {
 			var _ftw = (new Date(this.selY, this.selM, 1)).getDay(), // 顯示月份首日為星期幾
 				k,
 				maxDate;
@@ -174,12 +183,32 @@
 					event.data.obj.changeDate(event.data.y, null, null);
 				}).text('<< ').appendTo($td);
 			//$('<span/>').css({color:'#FFFFFF',fontFamily:this.options.fontFamily,fontWeight:'bold'}).text(this.selY).appendTo($td);
-			$('<input type="text" name="CALENDAR_UI_YEAR_SELECTOR" value="' + this.selY + '"/>').css({fontWeight: 'bold', textAlign: 'center', fontSize: '12px', width:'50px'}).appendTo($td)
+
+			if(this.options.taiwan){
+				$('<span/>').html('民國 ').css({color:'#ffffff', fontSize: '12px'}).appendTo($td);
+			}
+
+			$('<input type="text" name="CALENDAR_UI_YEAR_SELECTOR" value="' + (this.options.taiwan?this.selY-1911:this.selY) + '"/>').css({fontWeight: 'bold', textAlign: 'center', fontSize: '12px', width:'50px'}).appendTo($td)
 				.bind('keyup', {obj: this}, function (event) {
-					if (!isNaN(event.target.value) && event.target.value > 1800 && event.target.value < 2100) {
-						event.data.obj.changeDate(event.target.value, null, null);
+					if (event.data.obj.options.taiwan) {
+						if (!isNaN(event.target.value) && event.target.value >= 0 && event.target.value <= 202) { // 切換年欄位僅支援民國元年~202年
+							if (event.data.obj.timerID) {
+								clearTimeout(event.data.obj.timerID);
+							}
+							event.data.obj.timerID = setTimeout(function () {
+								event.data.obj.changeDate(event.target.value, null, null);
+							}, 700);
+						}
+					} else {
+						if (!isNaN(event.target.value) && event.target.value > 1800 && event.target.value < 2113) { // 支援西元1800~2113年
+							event.data.obj.changeDate(event.target.value, null, null);
+						}
 					}
 				});
+
+			if(this.options.taiwan){
+				$('<span/>').html(' 年').css({color:'#ffffff', fontSize: '12px'}).appendTo($td);
+			}
 
 			$('<a/>').css({fontFamily: this.options.fontFamily, fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer', color: '#FFFF00'})
 				.attr('title', parseInt(this.selY, 10) + 1).bind('click', {obj: this, y: parseInt(this.selY, 10) + 1}, function (event) {
@@ -400,6 +429,9 @@
 
 						dA = target[0].value.match(/(\d+)\D+(\d+)\D+(\d+)/);
 						if (dA) {
+							if (dA[1] < 202) { // 小於202視為民國年
+								dA[1] = parseInt(dA[1], 10) + 1911;
+							}
 							calendar.showCalendar(dA[1], dA[2]-1, dA[3]);
 						} else {
 							calendar.showCalendar();
