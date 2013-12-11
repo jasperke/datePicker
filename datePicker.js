@@ -1,5 +1,5 @@
 // define jQuery plugin datePicker()
-(function($){
+(function ($) {
 	'use strict';
 	function CalendarSelector(options) {
 		this.options = {
@@ -13,9 +13,9 @@
 			weekMode: false,			// 選週模式
 			multipleSelect: false,	// 複選日期
 			taiwan: false, // 是否採民國年
-			success: function(date) {	// 可重設指定外部function執行選定日期後續動作
+			success: function (date) {	// 可重設指定外部function執行選定日期後續動作
 				if (this.options.taiwan) {
-					this.targetField.value = date.length ? '民國' + (date[0] - 1911) + '年' + date[1] + '月' + date[2] +'日': '';
+					this.targetField.value = date.length ? '民國' + (date[0] - 1911) + '年' + date[1] + '月' + date[2] + '日' : '';
 				} else {
 					this.targetField.value = date.length ? date[0] + '-' + date[1] + '-' + date[2] : '';
 				}
@@ -36,7 +36,7 @@
 		this.element = null;
 	}
 	CalendarSelector.prototype = {
-		init: function(options){
+		init: function (options) {
 			$.extend(this.options, options || {});
 			if (this.options.multipleSelect) { // 複選日期不提供清空按鈕及選週模式
 				this.options.clearButton = false;
@@ -58,11 +58,11 @@
 			}
 		},
 		_maxDate: function (yy, mm) { // mm:0-11, 傳回某月份最後一日日期
-			while(mm < 0) {
+			while (mm < 0) {
 				mm = 12 + mm;
 				yy--;
 			}
-			if (mm == 0 || mm == 2 || mm == 4 || mm == 6 || mm == 7 || mm == 9|| mm == 11) {
+			if (mm == 0 || mm == 2 || mm == 4 || mm == 6 || mm == 7 || mm == 9 || mm == 11) {
 				return 31;
 			} else if (mm == 3 || mm == 5 || mm == 8 || mm == 10) {
 				return 30;
@@ -110,11 +110,11 @@
 				this.selD = currentTime.getDate();
 			}
 			if (this.options.weekMode) { // 選週模式
-				var _theDay = new Date(this.selY,this.selM,this.selD),
+				var _theDay = new Date(this.selY, this.selM, this.selD),
 					_w = _theDay.getDay(); // 傳入日為星期幾
 				this.beginDate = _theDay - (24 * 60 * 60 * 1000 * _w);
 				this.endDate = this.beginDate + (24 * 60 * 60 * 1000 * 6);
-			}else{
+			} else {
 				this.beginDate = this.endDate = new Date(this.selY, this.selM, this.selD);
 			}
 
@@ -134,7 +134,7 @@
 			if (y !== null) {
 				this.selY = y;
 			}
-			if (m !== null ) {
+			if (m !== null) {
 				if (m < 0) {
 					this.selM = 11;
 					this.selY = this.selY - 1;
@@ -184,11 +184,11 @@
 				}).text('<< ').appendTo($td);
 			//$('<span/>').css({color:'#FFFFFF',fontFamily:this.options.fontFamily,fontWeight:'bold'}).text(this.selY).appendTo($td);
 
-			if(this.options.taiwan){
-				$('<span/>').html('民國 ').css({color:'#ffffff', fontSize: '12px'}).appendTo($td);
+			if (this.options.taiwan) {
+				$('<span/>').html('民國 ').css({color: '#ffffff', fontSize: '12px'}).appendTo($td);
 			}
 
-			$('<input type="text" name="CALENDAR_UI_YEAR_SELECTOR" value="' + (this.options.taiwan?this.selY-1911:this.selY) + '"/>').css({fontWeight: 'bold', textAlign: 'center', fontSize: '12px', width:'50px'}).appendTo($td)
+			$('<input type="text" name="CALENDAR_UI_YEAR_SELECTOR" value="' + (this.options.taiwan ? this.selY - 1911 : this.selY) + '"/>').css({fontWeight: 'bold', textAlign: 'center', fontSize: '12px', width: '50px'}).appendTo($td)
 				.bind('keyup', {obj: this}, function (event) {
 					if (event.data.obj.options.taiwan) {
 						if (!isNaN(event.target.value) && event.target.value >= 0 && event.target.value <= 202) { // 切換年欄位僅支援民國元年~202年
@@ -206,8 +206,8 @@
 					}
 				});
 
-			if(this.options.taiwan){
-				$('<span/>').html(' 年').css({color:'#ffffff', fontSize: '12px'}).appendTo($td);
+			if (this.options.taiwan) {
+				$('<span/>').html(' 年').css({color: '#ffffff', fontSize: '12px'}).appendTo($td);
 			}
 
 			$('<a/>').css({fontFamily: this.options.fontFamily, fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer', color: '#FFFF00'})
@@ -251,21 +251,23 @@
 				i;
 
 			for (i = 0; i < 12; i++) {
-				$('<td/>').attr({width: '16%', align: 'center', monthIdx: i}).css({MozUserSelect: 'none', fontSize: '11px', borderWidth: '1px', borderStyle: 'solid', fontFamily: this.options.fontFamily, backgroundColor: '#D6D3CE', color:'#666666', borderTopColor: '#FFFFFF', borderLeftColor: '#FFFFFF', borderRightColor: '#000000', borderBottomColor: '#000000', cursor: 'pointer'})
+				$('<td/>').attr({width: '16%', align: 'center', monthIdx: i}).css({MozUserSelect: 'none', fontSize: '11px', borderWidth: '1px', borderStyle: 'solid', fontFamily: this.options.fontFamily, backgroundColor: '#D6D3CE', color: '#666666', borderTopColor: '#FFFFFF', borderLeftColor: '#FFFFFF', borderRightColor: '#000000', borderBottomColor: '#000000', cursor: 'pointer'})
 					.text(this.options.monthName[i]).appendTo($tr);
 				if (i == 5) {
 					$tr = $('<tr/>').appendTo($table);
 				}
 			}
-			$('td:eq('+this.selM+')', $table).css({color: '#0000FF', borderTopColor: '#000000', borderLeftColor: '#000000', borderRightColor: '#FFFFFF', borderBottomColor: '#FFFFFF'});
+			$('td:eq(' + this.selM + ')', $table).css({color: '#0000FF', borderTopColor: '#000000', borderLeftColor: '#000000', borderRightColor: '#FFFFFF', borderBottomColor: '#FFFFFF'});
 
 			$('td:not(:eq(' + this.selM + '))', $table).bind('mousedown', {obj: this, act: 1}, function (event) {
 					event.data.obj.tButton(this, event.data.act);
 				})
-				.bind('mouseout mouseup', {obj: this, act: 0}, function (event){
-					event.data.obj.tButton(this,event.data.act);
+				.bind('mouseout mouseup', {obj: this, act: 0}, function (event) {
+					event.data.obj.tButton(this, event.data.act);
 				})
-				.bind('selectstart', new Function('return false;'))
+				.bind('selectstart', function () {
+					return false;
+				})
 				.bind('click', {obj: this}, function (event) {
 					event.data.obj.changeDate(null, $(this).attr('monthIdx'), null);
 				});
@@ -282,7 +284,9 @@
 				c;
 
 			// week header
-			$tr = $('<tr/>').css({MozUserSelect: 'none'}).appendTo($table).bind('selectstart', new Function('return false;'));
+			$tr = $('<tr/>').css({MozUserSelect: 'none'}).appendTo($table).bind('selectstart', function () {
+				return false;
+			});
 			for (w = 0; w < 7; w++) {
 				$('<td/>').attr({width: '14%', align: 'center'}).css({fontSize: '11px', fontWeight: 'bold', fontFamily: this.options.fontFamily, color: '#FFFFFF', backgroundColor: (w == 0 || w == 6) ? '#FFB9B9' : '#006699'})
 					.text(this.options.weekName[w])
@@ -293,7 +297,9 @@
 			_row = Math.ceil(this.everyDays.length / 7);
 			_greyDate = this._maxDate(this.selY, this.selM - 1) - (new Date(this.selY, this.selM, 1)).getDay() + 1;
 			for (r = 0; r < _row; r++) {
-				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', new Function('return false;')).appendTo($table);
+				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', function () {
+					return false;
+				}).appendTo($table);
 				for (c = 0; c < 7; c++) {
 					idx = r * 7 + c;
 					_td = $('<td/>').css({fontSize: '11px', fontFamily: this.options.fontFamily}).attr({align: 'center', bgColor: '#FFFFFF'}).appendTo($tr);
@@ -301,7 +307,7 @@
 						_td.addClass('invalid_cell').text(_greyDate++);
 					} else {
 						_greyDate = 1;
-						if (idx % 7 == 0 || idx %7 == 6){
+						if (idx % 7 == 0 || idx % 7 == 6) {
 							_td.addClass('weekend_cell');
 						}
 						if (this.selY == this._todayYear && this.selM == this._todayMonth && this.everyDays[idx] == this._todayDate) { // 今天
@@ -313,7 +319,7 @@
 								$(this).css({backgroundColor: '#C6D9EC'});
 							})
 							.bind('mouseout', function () {
-								$(this).css({backgroundColor:''});
+								$(this).css({backgroundColor: ''});
 							})
 							.bind('click', {obj: this, dateArray: [this.selY, this.selM, this.everyDays[idx]]}, function (event) {
 								if (!event.data.obj.options.multipleSelect) {
@@ -341,7 +347,7 @@
 		_refreshMultipleSelectBox: function () {
 			var obj = this;
 			this.multipleSelectResultBox.empty();
-			$.each(this.multipleSelectResult, function(idx, elm) {
+			$.each(this.multipleSelectResult, function (idx, elm) {
 				if (idx > 0) {
 					obj.multipleSelectResultBox.append(', ');
 				}
@@ -357,7 +363,7 @@
 				if (!this.multipleSelect) {
 					if (this.options.weekMode) {
 						var _theDay = new Date(dateArray[0], dateArray[1], dateArray[2]),
-							_w=_theDay.getDay(); // 為星期幾
+							_w = _theDay.getDay(); // 為星期幾
 						this.beginDate = new Date(_theDay.getTime() - (24 * 60 * 60 * 1000 * _w));
 						this.endDate = new Date(this.beginDate.getTime() + (24 * 60 * 60 * 1000 * 6));
 						this.returnValue = [this.beginDate.getFullYear(), this.beginDate.getMonth(), this.beginDate.getDate(), this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate()];
@@ -370,7 +376,7 @@
 					//this.options.success(this.multipleSelectResult,[this.returnValue[0],(this.returnValue[1]*1+1),this.returnValue[2],this.returnValue[3],(this.returnValue[4]*1+1),this.returnValue[5]]);
 					this.options.success.call(this, this.multipleSelectResult, [this.returnValue[0], (this.returnValue[1] * 1 + 1), this.returnValue[2], this.returnValue[3], (this.returnValue[4] * 1 + 1), this.returnValue[5]]);
 				}
-			}else{
+			} else {
 				this.options.success.call(this, []);
 			}
 			this.hindCalendar();
@@ -384,7 +390,7 @@
 			}
 			obj.hindCalendar();
 		},
-		tButton: function(td, act) {
+		tButton: function (td, act) {
 			if (act) {
 				$(td).css({borderColor: this.options.bcl + ' ' + this.options.bcd + ' ' + this.options.bcd + ' ' + this.options.bcl});
 			} else {
@@ -432,7 +438,7 @@
 							if (dA[1] < 202) { // 小於202視為民國年
 								dA[1] = parseInt(dA[1], 10) + 1911;
 							}
-							calendar.showCalendar(dA[1], dA[2]-1, dA[3]);
+							calendar.showCalendar(dA[1], dA[2] - 1, dA[3]);
 						} else {
 							calendar.showCalendar();
 						}
