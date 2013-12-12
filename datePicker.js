@@ -1,7 +1,7 @@
 // define jQuery plugin datePicker()
 (function ($) {
 	'use strict';
-	function CalendarSelector(options) {
+	function CalendarSelector() {
 		this.options = {
 			uiWidth: 170,
 			weekName: ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'],
@@ -118,14 +118,14 @@
 				this.beginDate = this.endDate = new Date(this.selY, this.selM, this.selD);
 			}
 
-			this.changeDate(this.selY, this.selM, this.selD);
+			this.changeDate(this.selY, this.selM);
 			this._show = true;
 			this.element.css({top: this._posY + 'px', left: this._posX + 'px'}).show('fast');
 		},
 		isVisible: function () {
 			return this._show;
 		},
-		changeDate: function (y, m, d) {
+		changeDate: function (y, m) { // 切換月份
 			if (y !== null && y < 202) { // 小於202自動視為民國年
 				y = parseInt(y, 10) + 1911;
 			}
@@ -170,7 +170,7 @@
 		_rander: function () {
 			this._setCurrentTime();
 			var $table = $('<table/>', {width: '100%', border: 0, cellSpacing: 0, cellPadding: 0, bgColor: '#00358C'}).appendTo(this.element),
-				$tr = $('<tr/>').appendTo($table), // {css:{MozUserSelect:'none'},selectstart:new Function("return false;")}
+				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', this._preventDefault).appendTo($table),
 				$td,
 				_button,
 				OkButton,
@@ -180,7 +180,7 @@
 			$td = $('<td/>', {align: 'center', width: '80%'}).css({padding: '1px'}).appendTo($tr);
 			$('<a/>').css({fontFamily: this.options.fontFamily, fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer', color: '#FFFF00'})
 				.attr('title', this.selY - 1).bind('click', {obj: this, y: this.selY - 1}, function (event) {
-					event.data.obj.changeDate(event.data.y, null, null);
+					event.data.obj.changeDate(event.data.y, null);
 				}).text('<< ').appendTo($td);
 			//$('<span/>').css({color:'#FFFFFF',fontFamily:this.options.fontFamily,fontWeight:'bold'}).text(this.selY).appendTo($td);
 
@@ -196,12 +196,12 @@
 								clearTimeout(event.data.obj.timerID);
 							}
 							event.data.obj.timerID = setTimeout(function () {
-								event.data.obj.changeDate(event.target.value, null, null);
+								event.data.obj.changeDate(event.target.value, null);
 							}, 700);
 						}
 					} else {
 						if (!isNaN(event.target.value) && event.target.value > 1800 && event.target.value < 2113) { // 支援西元1800~2113年
-							event.data.obj.changeDate(event.target.value, null, null);
+							event.data.obj.changeDate(event.target.value, null);
 						}
 					}
 				});
@@ -212,7 +212,7 @@
 
 			$('<a/>').css({fontFamily: this.options.fontFamily, fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer', color: '#FFFF00'})
 				.attr('title', parseInt(this.selY, 10) + 1).bind('click', {obj: this, y: parseInt(this.selY, 10) + 1}, function (event) {
-					event.data.obj.changeDate(event.data.y, null, null);
+					event.data.obj.changeDate(event.data.y, null);
 				}).text(' >>').appendTo($td);
 
 			this._monthPart($('<td/>').appendTo($('<tr/>').appendTo($table)));
@@ -265,12 +265,13 @@
 				.bind('mouseout mouseup', {obj: this, act: 0}, function (event) {
 					event.data.obj.tButton(this, event.data.act);
 				})
-				.bind('selectstart', function () {
-					return false;
-				})
+				.bind('selectstart', this._preventDefault)
 				.bind('click', {obj: this}, function (event) {
-					event.data.obj.changeDate(null, $(this).attr('monthIdx'), null);
+					event.data.obj.changeDate(null, $(this).attr('monthIdx'));
 				});
+		},
+		_preventDefault: function (event) {
+			event.preventDefault();
 		},
 		_dayPart: function ($td) {
 			var $table = $('<table/>').attr({width: '100%', border: 0, cellPadding: 0, cellSpacing: 1, bgColor: '#F0F0F0'}).appendTo($td),
@@ -284,9 +285,7 @@
 				c;
 
 			// week header
-			$tr = $('<tr/>').css({MozUserSelect: 'none'}).appendTo($table).bind('selectstart', function () {
-				return false;
-			});
+			$tr = $('<tr/>').css({MozUserSelect: 'none'}).appendTo($table).bind('selectstart', this._preventDefault);
 			for (w = 0; w < 7; w++) {
 				$('<td/>').attr({width: '14%', align: 'center'}).css({fontSize: '11px', fontWeight: 'bold', fontFamily: this.options.fontFamily, color: '#FFFFFF', backgroundColor: (w == 0 || w == 6) ? '#FFB9B9' : '#006699'})
 					.text(this.options.weekName[w])
@@ -297,9 +296,7 @@
 			_row = Math.ceil(this.everyDays.length / 7);
 			_greyDate = this._maxDate(this.selY, this.selM - 1) - (new Date(this.selY, this.selM, 1)).getDay() + 1;
 			for (r = 0; r < _row; r++) {
-				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', function () {
-					return false;
-				}).appendTo($table);
+				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', this._preventDefault).appendTo($table);
 				for (c = 0; c < 7; c++) {
 					idx = r * 7 + c;
 					_td = $('<td/>').css({fontSize: '11px', fontFamily: this.options.fontFamily}).attr({align: 'center', bgColor: '#FFFFFF'}).appendTo($tr);
@@ -315,19 +312,9 @@
 						} else if (this.isSelectedDate(this.selY, this.selM, this.everyDays[idx])) { // 選定天
 							_td.addClass('selected_cell');
 						}
-						_td.css({cursor: 'pointer'}).bind('mouseover', function () {
-								$(this).css({backgroundColor: '#C6D9EC'});
-							})
-							.bind('mouseout', function () {
-								$(this).css({backgroundColor: ''});
-							})
-							.bind('click', {obj: this, dateArray: [this.selY, this.selM, this.everyDays[idx]]}, function (event) {
-								if (!event.data.obj.options.multipleSelect) {
-									event.data.obj._dateHandler(event.data.dateArray);
-								} else {
-									event.data.obj._addToMultipleSelectResult(event.data.dateArray);
-								}
-							}).text(this.everyDays[idx]);
+						_td.css({cursor: 'pointer'}).bind('mouseover', {color: '#C6D9EC'}, this.changeCellBgColor)
+							.bind('mouseout', {color: ''}, this.changeCellBgColor)
+							.bind('click', {obj: this, dateArray: [this.selY, this.selM, this.everyDays[idx]]}, this.clickDateCell).text(this.everyDays[idx]);
 					}
 				}
 			}
@@ -335,6 +322,16 @@
 			$('td.weekend_cell', $table).css({color: '#FF0000'});
 			$('td.today_cell', $table).attr('bgColor', '#FFCC00');
 			$('td.selected_cell', $table).attr('bgColor', '#D9D9FF');
+		},
+		changeCellBgColor: function (event) { // 日期cell上onmouseover/onmouseout時, 變換cell底色
+			$(this).css({backgroundColor: event.data.color});
+		},
+		clickDateCell: function (event) {
+			if (!event.data.obj.options.multipleSelect) {
+				event.data.obj._dateHandler(event.data.dateArray);
+			} else {
+				event.data.obj._addToMultipleSelectResult(event.data.dateArray);
+			}
 		},
 		isSelectedDate: function (y, m, d) {
 			var thisDate = new Date(y, m, d);
