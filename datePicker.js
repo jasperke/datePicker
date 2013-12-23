@@ -13,9 +13,10 @@
 			weekMode: false,			// 選週模式
 			multipleSelect: false,	// 複選日期
 			taiwan: false, // 是否採民國年
+			taiwanPrefix: false, // 是否輸出民國二字
 			success: function (date) {	// 可重設指定外部function執行選定日期後續動作
 				if (this.options.taiwan) {
-					this.targetField.value = date.length ? '民國' + (date[0] - 1911) + '年' + date[1] + '月' + date[2] + '日' : '';
+					this.targetField.value = date.length ? (this.options.taiwanPrefix ? '民國' : '') + (date[0] - 1911) + '年' + date[1] + '月' + date[2] + '日' : '';
 				} else {
 					this.targetField.value = date.length ? date[0] + '-' + date[1] + '-' + date[2] : '';
 				}
