@@ -356,6 +356,9 @@
 					});
 			});
 		},
+		prefixZero: function (n) {
+			return n >= 10 ? n : '0' + n;
+		},
 		_dateHandler: function (dateArray) {
 			if (dateArray.length) {
 				if (!this.multipleSelect) {
@@ -364,15 +367,15 @@
 							_w = _theDay.getDay(); // 為星期幾
 						this.beginDate = new Date(_theDay.getTime() - (24 * 60 * 60 * 1000 * _w));
 						this.endDate = new Date(this.beginDate.getTime() + (24 * 60 * 60 * 1000 * 6));
-						this.returnValue = [this.beginDate.getFullYear(), this.beginDate.getMonth(), this.beginDate.getDate(), this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate()];
+						this.returnValue = [this.beginDate.getFullYear(), this.prefixZero(this.beginDate.getMonth()), this.prefixZero(this.beginDate.getDate()), this.endDate.getFullYear(), this.prefixZero(this.endDate.getMonth()), this.prefixZero(this.endDate.getDate())];
 					} else {
 						this.returnValue = dateArray;
 					}
 					//this.options.success([this.returnValue[0],(this.returnValue[1]*1+1),this.returnValue[2],this.returnValue[3],(this.returnValue[4]*1+1),this.returnValue[5]]);
-					this.options.success.call(this, [this.returnValue[0], (this.returnValue[1] * 1 + 1), this.returnValue[2], this.returnValue[3], (this.returnValue[4] * 1 + 1), this.returnValue[5]]);
+					this.options.success.call(this, [this.returnValue[0], this.prefixZero(this.returnValue[1] * 1 + 1), this.prefixZero(this.returnValue[2]), this.returnValue[3], this.prefixZero(this.returnValue[4] * 1 + 1), this.prefixZero(this.returnValue[5])]);
 				} else {
 					//this.options.success(this.multipleSelectResult,[this.returnValue[0],(this.returnValue[1]*1+1),this.returnValue[2],this.returnValue[3],(this.returnValue[4]*1+1),this.returnValue[5]]);
-					this.options.success.call(this, this.multipleSelectResult, [this.returnValue[0], (this.returnValue[1] * 1 + 1), this.returnValue[2], this.returnValue[3], (this.returnValue[4] * 1 + 1), this.returnValue[5]]);
+					this.options.success.call(this, this.multipleSelectResult, [this.returnValue[0], this.prefixZero(this.returnValue[1] * 1 + 1), this.prefixZero(this.returnValue[2]), this.returnValue[3], this.prefixZero(this.returnValue[4] * 1 + 1), this.prefixZero(this.returnValue[5])]);
 				}
 			} else {
 				this.options.success.call(this, []);
