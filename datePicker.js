@@ -432,6 +432,9 @@
 						if ((pos.top + calendarLayerHeight) > (document.body.scrollTop + document.body.clientHeight)) {
 							pos.top = target.offset().top - calendarLayerHeight - target.height();
 						}
+						if (pos.top < 0) { // 若往上長時超出頁面上綠
+							pos.top = 0;
+						}
 						calendar.setXY(pos.left, pos.top + target.outerHeight() + 1);
 
 						dA = target[0].value.match(/(\d+)\D+(\d+)\D+(\d+)/);
