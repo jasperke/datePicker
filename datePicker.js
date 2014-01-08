@@ -3,7 +3,7 @@
 	'use strict';
 	function CalendarSelector() {
 		this.options = {
-			uiWidth: 170,
+			uiWidth: 190,
 			weekName: ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'],
 			monthName: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 			fontFamily: '"Arial","Helvetica","sans-serif"',
@@ -252,7 +252,7 @@
 				i;
 
 			for (i = 0; i < 12; i++) {
-				$('<td/>').attr({width: '16%', align: 'center', monthIdx: i}).css({MozUserSelect: 'none', fontSize: '11px', borderWidth: '1px', borderStyle: 'solid', fontFamily: this.options.fontFamily, backgroundColor: '#D6D3CE', color: '#666666', borderTopColor: '#FFFFFF', borderLeftColor: '#FFFFFF', borderRightColor: '#000000', borderBottomColor: '#000000', cursor: 'pointer'})
+				$('<td/>').attr({width: '16%', align: 'center', monthIdx: i}).css({MozUserSelect: 'none', fontSize: '12px', padding: '1px', borderWidth: '1px', borderStyle: 'solid', fontFamily: this.options.fontFamily, backgroundColor: '#D6D3CE', color: '#666666', borderTopColor: '#FFFFFF', borderLeftColor: '#FFFFFF', borderRightColor: '#000000', borderBottomColor: '#000000', cursor: 'pointer'})
 					.text(this.options.monthName[i]).appendTo($tr);
 				if (i == 5) {
 					$tr = $('<tr/>').appendTo($table);
@@ -288,7 +288,7 @@
 			// week header
 			$tr = $('<tr/>').css({MozUserSelect: 'none'}).appendTo($table).bind('selectstart', this._preventDefault);
 			for (w = 0; w < 7; w++) {
-				$('<td/>').attr({width: '14%', align: 'center'}).css({fontSize: '11px', fontWeight: 'bold', fontFamily: this.options.fontFamily, color: '#FFFFFF', backgroundColor: (w == 0 || w == 6) ? '#FFB9B9' : '#006699'})
+				$('<td/>').attr({width: '14%', align: 'center'}).css({fontSize: '12px', padding: '1px', fontWeight: 'bold', fontFamily: this.options.fontFamily, color: '#FFFFFF', backgroundColor: (w == 0 || w == 6) ? '#FFB9B9' : '#006699'})
 					.text(this.options.weekName[w])
 					.appendTo($tr);
 			}
@@ -300,7 +300,7 @@
 				$tr = $('<tr/>').css({MozUserSelect: 'none'}).bind('selectstart', this._preventDefault).appendTo($table);
 				for (c = 0; c < 7; c++) {
 					idx = r * 7 + c;
-					_td = $('<td/>').css({fontSize: '11px', fontFamily: this.options.fontFamily}).attr({align: 'center', bgColor: '#FFFFFF'}).appendTo($tr);
+					_td = $('<td/>').css({fontSize: '12px', padding: '1px', fontFamily: this.options.fontFamily}).attr({align: 'center', bgColor: '#FFFFFF'}).appendTo($tr);
 					if (!this.everyDays[idx] || this.everyDays[idx] === null) {
 						_td.addClass('invalid_cell').text(_greyDate++);
 					} else {
